@@ -1,46 +1,36 @@
-
 import sys
 import os
 import streamlit as st
 import tempfile
 import shutil
-
-
 # --- 1. Environment Variables ---
 # Prefer Streamlit secrets for production deployment for ANTHROPIC_API_KEY
 # For local testing, it falls back to config.py
 try:
     ANTHROPIC_API_KEY = st.secrets["ANTHROPIC_API_KEY"]
 except KeyError:
-    
 # --- 2. LLM Initialization ---
 llm = ChatAnthropic(
     model_name=MODEL_NAME,
     temperature=TEMPERATURE,
     max_tokens=MAX_TOKENS # Use max_tokens for ChatAnthropic
 )
-
 # --- 3. Embeddings Initialization ---
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
-
 # --- 4. Define Tools ---
 # Farm Profit Calculator
 def calculate_profit(cost, revenue):
     return revenue - cost
-
 # Web Search Tool
 search = DuckDuckGoSearchRun()
-
 # --- 5. Document Loading, Splitting, and Vector Store (RAG Setup) ---
 VECTOR_STORE_PATH = "faiss_index"
 VECTOR_STORE_NAME = "index"
-
 # Initialize vectorstore and retriever
 vectorstore = None
 retriever = None
-
 # Streamlit UI for Sidebar and PDF upload
 with st.sidebar:
     st.title("🌾 AgriSmart AI")
@@ -50,21 +40,17 @@ with st.sidebar:
     st.write("✔ Calculator")
     st.write("✔ Web Search")
     st.markdown("---")
-
     uploaded_file = st.file_uploader(
         "Upload Agricultural PDF",
         type="pdf"
     )
-
 documents = []
 docs = []
-
 if uploaded_file is not None:
     # Save uploaded file to a temporary location for PyPDFLoader
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
         tmp_file.write(uploaded_file.getvalue())
         temp_file_path = tmp_file.name
-
     try:
         loader = PyPDFLoader(temp_file_path)
         documents = loader.load()
@@ -73,7 +59,6 @@ if uploaded_file is not None:
         st.sidebar.error(f"Error loading uploaded PDF: {e}")
     finally:
         os.remove(temp_file_path) # Clean up temporary file
-
 if documents: # If documents were loaded from uploaded PDF
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     docs = splitter.split_documents(documents)
@@ -108,10 +93,8 @@ Challenges in agriculture include climate change, soil degradation, and pest res
     """
     mock_doc = Document(page_content=mock_content, metadata={'source': 'mock_document.txt', 'page': 1})
     documents = [mock_doc]
-
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     docs = splitter.split_documents(documents)
-
     if docs:
         vectorstore = FAISS.from_documents(documents=docs, embedding=embeddings)
         vectorstore.save_local(folder_path=VECTOR_STORE_PATH, index_name=VECTOR_STORE_NAME)
@@ -119,18 +102,14 @@ Challenges in agriculture include climate change, soil degradation, and pest res
         retriever = vectorstore.as_retriever()
     else:
         st.sidebar.error("Failed to create vector store even with mock data.")
-
 # --- 6. Conversation Memory ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
 # --- 7. Chat Interface ---
 st.title("🌱 AgriSmart AI")
 prompt = st.chat_input("Ask me anything about farming...")
-
 if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
-
     # Tool Routing Logic
     response_content = ""
     if "price" in prompt.lower():
@@ -148,9 +127,7 @@ if prompt:
     else:
         # Default to LLM without specific tools/RAG
         response_content = llm.invoke(prompt).content
-
     st.session_state.messages.append({"role": "assistant", "content": response_content})
-
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.write(message["content"])
