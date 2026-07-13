@@ -4,8 +4,9 @@ import os
 import streamlit as st
 import tempfile
 import shutil
+import langchain
 
-from langchain_groq import Chatgroq
+from langchain_Anthropic import ChatAnthropic
 from langchain_huggingface import HuggingFaceEmbeddings # Keeping HuggingFaceEmbeddings as a common choice
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import PyPDFLoader
