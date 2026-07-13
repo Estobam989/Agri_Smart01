@@ -12,7 +12,7 @@ import shutil
 try:
     ANTHROPIC_API_KEY = st.secrets["ANTHROPIC_API_KEY"]
 except KeyError:
-    import config # Import config
+    import config
     ANTHROPIC_API_KEY = config.ANTHROPIC_API_KEY
     st.warning("ANTHROPIC_API_KEY not found in Streamlit secrets. Using config.py. Please set it in Streamlit secrets for deployment.")
 
