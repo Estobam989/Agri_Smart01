@@ -4,7 +4,7 @@ import os
 import streamlit as st
 import tempfile
 import shutil
-import langchain as hub
+import langchain_hub as hub
 
 from langchain_anthropic import ChatAnthropic
 from langchain_huggingface import HuggingFaceEmbeddings # Keeping HuggingFaceEmbeddings as a common choice
