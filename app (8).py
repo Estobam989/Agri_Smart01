@@ -12,21 +12,7 @@ import shutil
 try:
     ANTHROPIC_API_KEY = st.secrets["ANTHROPIC_API_KEY"]
 except KeyError:
-    import config
-    ANTHROPIC_API_KEY = config.ANTHROPIC_API_KEY
-    st.warning("ANTHROPIC_API_KEY not found in Streamlit secrets. Using config.py. Please set it in Streamlit secrets for deployment.")
-
-MODEL_NAME = config.MODEL_NAME
-TEMPERATURE = config.TEMPERATURE
-MAX_TOKENS = config.MAX_TOKENS
-
-if not ANTHROPIC_API_KEY or ANTHROPIC_API_KEY == "sk-YOUR_ANTHROPIC_API_KEY":
-    st.error("ANTHROPIC_API_KEY not found or is still a placeholder. Please set it in your Streamlit secrets or config.py.")
-    st.stop()
-
-# Set ANTHROPIC_API_KEY environment variable
-os.environ["ANTHROPIC_API_KEY"] = ANTHROPIC_API_KEY
-
+    
 # --- 2. LLM Initialization ---
 llm = ChatAnthropic(
     model_name=MODEL_NAME,
