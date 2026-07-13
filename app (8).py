@@ -5,13 +5,6 @@ import streamlit as st
 import tempfile
 import shutil
 
-from langchain_huggingface import HuggingFaceEmbeddings # Keeping HuggingFaceEmbeddings as a common choice
-from langchain_community.vectorstores import FAISS
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.tools import DuckDuckGoSearchRun
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_core.documents import Document
-
 
 # --- 1. Environment Variables ---
 # Prefer Streamlit secrets for production deployment for ANTHROPIC_API_KEY
